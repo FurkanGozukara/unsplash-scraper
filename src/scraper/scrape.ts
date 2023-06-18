@@ -35,14 +35,14 @@ const scrape = async (
 
   const images = data.results.map((result: ImageData) => {
     return {
-      description: result.description,
+      description: result.description || null,
       urls: {
-        full: result.urls.full,
-        raw: result.urls.raw,
-        regular: result.urls.regular,
-        small: result.urls.small,
-        small_s3: result.urls.small_s3,
-        thumb: result.urls.thumb,
+        full: result.urls.full || null,
+        raw: result.urls.raw || null,
+        regular: result.urls.regular || null,
+        small: result.urls.small || null,
+        small_s3: result.urls.small_s3 || null,
+        thumb: result.urls.thumb || null,
       },
     }
   })
