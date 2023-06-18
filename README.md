@@ -77,6 +77,8 @@ Response:
 }
 ```
 
+> Some fields may be `null`, this depends on unsplash api
+
 `total`: total results
 
 `total_pages`: total pages per x limit
