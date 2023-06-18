@@ -29,7 +29,7 @@ npm run start
 **API Usage**
 
 ```
-GET http://localhost:3000/?query=&p=3&limit=
+GET http://localhost:3000/?query=&p=&limit=
 ```
 
 `query`: The search query
