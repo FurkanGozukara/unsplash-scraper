@@ -6,7 +6,13 @@
 nodejs v18
 ```
 
-**Usage**
+**Setup**
+
+Install required packages
+
+```bash
+npm install
+```
 
 Convert typescipt into javascript
 
@@ -20,7 +26,7 @@ Run the app
 npm run start
 ```
 
-**API**
+**API Usage**
 
 ```
 GET http://localhost:3000/?query=&p=3&limit=
