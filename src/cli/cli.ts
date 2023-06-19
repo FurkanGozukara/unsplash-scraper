@@ -10,7 +10,8 @@ const startCliApp = async (
   seachQuery: string,
   downloadAllImages: boolean,
   max_images: number,
-  size: Size
+  size: Size,
+  hide_plus: boolean
 ) => {
   console.log('\nSearch query:', seachQuery)
 
@@ -59,7 +60,7 @@ const startCliApp = async (
       if (image.urls.raw) {
         imagesToDownload.push({
           id: image.id,
-          url: filterImageUrl(image.urls.raw, size),
+          url: filterImageUrl(image.urls.raw, size, hide_plus),
         })
         progressBar.update(imagesToDownload.length)
 

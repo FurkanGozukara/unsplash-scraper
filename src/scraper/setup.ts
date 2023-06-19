@@ -9,6 +9,7 @@ interface Settings {
   downloadAllImages?: boolean
   max_images?: number
   size?: Size
+  hide_plus?: boolean
 }
 
 const setupScraper = async (): Promise<Settings> => {
@@ -54,11 +55,17 @@ const setupScraper = async (): Promise<Settings> => {
         message: 'What size do you want to download?',
         choices: ['Small', 'Medium', 'Original'],
       },
+      {
+        name: 'hide_plus',
+        type: 'confirm',
+        message: 'Do you want to exclude images that have unsplash watermark?',
+      },
     ])
 
     const seachQuery = answers.seachQuery
     const downloadAllImages = answers.downloadAllImages
     const size = answers.size
+    const hide_plus = answers.hide_plus
 
     let max_images = null
 
@@ -92,6 +99,7 @@ const setupScraper = async (): Promise<Settings> => {
       downloadAllImages,
       max_images,
       size,
+      hide_plus,
     }
   } catch (err) {
     console.error(err)
