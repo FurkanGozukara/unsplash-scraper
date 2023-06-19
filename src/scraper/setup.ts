@@ -28,13 +28,13 @@ const setupScraper = async (): Promise<Settings> => {
       {
         name: 'run_http_server',
         type: 'list',
-        message: 'Do you want to run the HTTP server or use the scraper cli?',
-        choices: ['HTTP Server', 'Scraper CLI'],
+        message: 'Do you want to run the REST API or use the scraper cli?',
+        choices: ['REST API', 'Scraper CLI'],
       },
     ])
 
-    if (modeAnswers.run_http_server === 'HTTP Server') {
-      return { page, mode: 'HTTP Server' }
+    if (modeAnswers.run_http_server === 'REST API') {
+      return { page, mode: 'REST API' }
     }
 
     const answers = await inquirer.prompt([

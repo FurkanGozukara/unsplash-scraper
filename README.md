@@ -26,7 +26,11 @@ Run the app
 npm run start
 ```
 
-**API Usage**
+## CLI App
+
+After chosing the settings you want, images will be downloaded inside `./downloads` folder
+
+## REST API
 
 ```
 GET http://localhost:3000/?query=&p=&limit=
