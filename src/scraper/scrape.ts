@@ -7,7 +7,8 @@ interface ResponseData {
 }
 
 interface ImageData {
-  description: string
+  id: string
+  description?: string
   urls: {
     full?: string
     raw?: string
@@ -35,6 +36,7 @@ const scrape = async (
 
   const images = data.results.map((result: ImageData) => {
     return {
+      id: result.id,
       description: result.description || null,
       urls: {
         full: result.urls.full || null,

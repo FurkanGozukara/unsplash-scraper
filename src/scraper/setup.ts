@@ -1,6 +1,17 @@
+import type { Mode, Size } from '../types.js'
 import puppeteer, { Page } from 'puppeteer'
+import inquirer from 'inquirer'
 
-const setupScraper = async (): Promise<Page> => {
+interface Settings {
+  page: Page
+  mode: Mode
+  seachQuery?: string
+  downloadAllImages?: boolean
+  max_images?: number
+  size?: Size
+}
+
+const setupScraper = async (): Promise<Settings> => {
   try {
     const browser = await puppeteer.launch({ headless: 'new' })
     const page = await browser.newPage()
@@ -13,7 +24,75 @@ const setupScraper = async (): Promise<Page> => {
       process.exit(0)
     })
 
-    return page
+    const modeAnswers = await inquirer.prompt([
+      {
+        name: 'run_http_server',
+        type: 'list',
+        message: 'Do you want to run the HTTP server or use the scraper cli?',
+        choices: ['HTTP Server', 'Scraper CLI'],
+      },
+    ])
+
+    if (modeAnswers.run_http_server === 'HTTP Server') {
+      return { page, mode: 'HTTP Server' }
+    }
+
+    const answers = await inquirer.prompt([
+      {
+        name: 'seachQuery',
+        type: 'input',
+        message: 'What do you want to search for?',
+      },
+      {
+        name: 'downloadAllImages',
+        type: 'confirm',
+        message: 'Do you want to download all images?',
+      },
+      {
+        name: 'size',
+        type: 'list',
+        message: 'What size do you want to download?',
+        choices: ['Small', 'Medium', 'Original'],
+      },
+    ])
+
+    const seachQuery = answers.seachQuery
+    const downloadAllImages = answers.downloadAllImages
+    const size = answers.size
+
+    let max_images = null
+
+    if (!seachQuery) {
+      console.error('Missing search query')
+      process.exit(1)
+    }
+
+    if (!downloadAllImages) {
+      const answers = await inquirer.prompt([
+        {
+          name: 'max_images',
+          type: 'input',
+          message: 'How many images do you want to download?',
+        },
+      ])
+
+      // if exists, convert to number
+      max_images = answers.max_images && +answers.max_images
+
+      if (!max_images) {
+        console.error('Missing max images')
+        process.exit(1)
+      }
+    }
+
+    return {
+      page,
+      mode: 'Scraper CLI',
+      seachQuery,
+      downloadAllImages,
+      max_images,
+      size,
+    }
   } catch (err) {
     console.error(err)
     process.exit(1)
