@@ -19,7 +19,7 @@ const downloadImage = async (url: string, id: string, queryPath: string) => {
   try {
     const options = {
       url,
-      dest: path.join(downloadPath, queryPath, `${id}.jpg`),
+      dest: path.join(queryPath, `${id}.jpg`),
     }
 
     await download.image(options)
