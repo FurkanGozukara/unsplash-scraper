@@ -78,7 +78,7 @@ const startCliApp = async (
 
   await downloadImages({
     images: imagesToDownload,
-    name: seachQuery,
+    query: seachQuery,
   })
   process.exit(0)
 }

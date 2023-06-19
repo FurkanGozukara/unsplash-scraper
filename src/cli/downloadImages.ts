@@ -6,7 +6,7 @@ import fs from 'fs'
 
 interface DownloadImagesOptions {
   images: Image[]
-  name: string
+  query: string
 }
 
 const downloadPath = path.join(path.resolve('downloads'))
@@ -15,11 +15,11 @@ if (!fs.existsSync(downloadPath)) {
   fs.mkdirSync(downloadPath)
 }
 
-const downloadImage = async (url: string, id: string, folder: string) => {
+const downloadImage = async (url: string, id: string, queryPath: string) => {
   try {
     const options = {
       url,
-      dest: path.join(downloadPath, folder, `${id}.jpg`),
+      dest: path.join(downloadPath, queryPath, `${id}.jpg`),
     }
 
     await download.image(options)
@@ -28,8 +28,8 @@ const downloadImage = async (url: string, id: string, folder: string) => {
   }
 }
 
-const downloadImages = async ({ images, name }: DownloadImagesOptions) => {
-  const queryPath = path.join(downloadPath, name)
+const downloadImages = async ({ images, query }: DownloadImagesOptions) => {
+  const queryPath = path.join(downloadPath, query)
 
   if (fs.existsSync(queryPath)) {
     console.log('Continuing download from the past session...')
@@ -52,7 +52,7 @@ const downloadImages = async ({ images, name }: DownloadImagesOptions) => {
   progressBar.start(images.length, 0)
 
   const downloadPromises = images.map(async (image) => {
-    await downloadImage(image.url, image.id, name)
+    await downloadImage(image.url, image.id, queryPath)
     progressBar.increment()
   })
 
