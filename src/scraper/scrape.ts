@@ -23,9 +23,14 @@ const scrape = async (
   page: Page,
   query: string,
   p: number,
-  limit: number
+  limit: number,
+  hide_plus: boolean = false
 ): Promise<ResponseData | false> => {
-  const api_url = `https://unsplash.com/napi/search/photos?query=${query}&per_page=${limit}&page=${p}`
+  let api_url = `https://unsplash.com/napi/search/photos?query=${query}&per_page=${limit}&page=${p}`
+
+  if (hide_plus) {
+    api_url += '&plus=none'
+  }
 
   const data = await page.evaluate((api_url) => {
     return fetch(api_url)

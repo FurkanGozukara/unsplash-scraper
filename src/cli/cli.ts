@@ -10,7 +10,8 @@ const startCliApp = async (
   seachQuery: string,
   downloadAllImages: boolean,
   max_images: number,
-  size: Size
+  size: Size,
+  hide_plus: boolean
 ) => {
   console.log('\nSearch query:', seachQuery)
 
@@ -39,7 +40,7 @@ const startCliApp = async (
     if (downloadAllImages && imagesToDownload.length === totalSteps) break
     if (!downloadAllImages && imagesToDownload.length === max_images) break
 
-    const images = await scrape(page, seachQuery, p, limit)
+    const images = await scrape(page, seachQuery, p, limit, hide_plus)
 
     if (!images || images.results.length === 0) break
 

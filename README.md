@@ -33,7 +33,7 @@ After chosing the settings you want, images will be downloaded inside `./downloa
 ## REST API
 
 ```
-GET http://localhost:3000/?query=&p=&limit=
+GET http://localhost:3000/?query=&p=&limit=&hide_plus=
 ```
 
 `query`: The search query
@@ -86,3 +86,5 @@ Response:
 `total`: total results
 
 `total_pages`: total pages per x limit
+
+`hide_plus`: it can be any truthy value, you can set it as "hide_plus=true". It hides the images that have unsplash watermark

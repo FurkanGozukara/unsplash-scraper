@@ -8,7 +8,7 @@ const startHttpServer = async (page: Page) => {
   app.use(express.json())
 
   app.get('/', async (req, res) => {
-    const { query, p, limit } = req.query
+    const { query, p, limit, hide_plus } = req.query
 
     if (!query || !p || !limit) {
       return res.status(400).json({
@@ -16,7 +16,7 @@ const startHttpServer = async (page: Page) => {
       })
     }
 
-    const data = await scrape(page, query.toString(), +p, +limit)
+    const data = await scrape(page, query.toString(), +p, +limit, !!hide_plus)
 
     if (!data) {
       return res.status(404).json({
