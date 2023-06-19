@@ -29,6 +29,18 @@ const downloadImage = async (url: string, id: string, folder: string) => {
 }
 
 const downloadImages = async ({ images, name }: DownloadImagesOptions) => {
+  const queryPath = path.join(downloadPath, name)
+
+  if (fs.existsSync(queryPath)) {
+    console.log('Continuing download from the past session...')
+    const oldImages = fs
+      .readdirSync(queryPath)
+      .map((image) => image.split('.')[0])
+    images = images.filter((image) => !oldImages.includes(image.id))
+  } else {
+    fs.mkdirSync(queryPath)
+  }
+
   console.log('\n')
   const progressBar = new cliProgress.SingleBar({
     format: 'Downloading Images [{bar}] {percentage}% | {value}/{total}',
@@ -36,15 +48,6 @@ const downloadImages = async ({ images, name }: DownloadImagesOptions) => {
     barIncompleteChar: '\u2591',
     hideCursor: true,
   })
-
-  const namePath = path.join(downloadPath, name)
-
-  if (fs.existsSync(namePath)) {
-    fs.rmSync(namePath, { recursive: true, force: true })
-    fs.mkdirSync(namePath)
-  } else {
-    fs.mkdirSync(namePath)
-  }
 
   progressBar.start(images.length, 0)
 
