@@ -1,6 +1,6 @@
 import { Size } from '../types.js'
 
-const filterImageUrl = (url: string, size: Size, hide_plus: boolean) => {
+const filterImageUrl = (url: string, size: Size) => {
   // Parse the URL
   const parsedUrl = new URL(url)
 
@@ -13,10 +13,6 @@ const filterImageUrl = (url: string, size: Size, hide_plus: boolean) => {
     parsedUrl.searchParams.append('w', '400')
   } else if (size === 'Medium') {
     parsedUrl.searchParams.append('w', '1080')
-  }
-
-  if (hide_plus) {
-    parsedUrl.searchParams.append('plus', 'none')
   }
 
   // Return the updated URL

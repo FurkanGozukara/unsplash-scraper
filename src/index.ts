@@ -3,15 +3,7 @@ import startHttpServer from './server.js'
 import startCliApp from './cli/cli.js'
 
 setupScraper().then(
-  async ({
-    page,
-    mode,
-    seachQuery,
-    downloadAllImages,
-    max_images,
-    size,
-    hide_plus,
-  }) => {
+  async ({ page, mode, seachQuery, downloadAllImages, max_images, size }) => {
     if (mode === 'REST API') {
       await startHttpServer(page)
     } else {
@@ -20,8 +12,7 @@ setupScraper().then(
         seachQuery!,
         downloadAllImages!,
         max_images!,
-        size!,
-        hide_plus!
+        size!
       )
     }
   }
