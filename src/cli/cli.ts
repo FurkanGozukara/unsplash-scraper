@@ -36,9 +36,21 @@ const startCliApp = async (
       )
 
       const oldLinks = JSON.parse(fs.readFileSync(linksPath, 'utf8'))
-      imagesToDownload.push(...oldLinks)
-    } else {
-      console.log('\n')
+
+      if (oldLinks.all && downloadAllImages) {
+        imagesToDownload.push(...oldLinks)
+      } else if (!downloadAllImages && oldLinks.images.length >= max_images) {
+        imagesToDownload.push(...oldLinks.images.slice(0, max_images))
+      } else {
+        // Delete old links
+        console.log('Old links are not valid anymore, getting new links')
+        fs.rmSync(linksPath)
+      }
+    }
+
+    console.log('\n')
+
+    if (imagesToDownload.length === 0) {
       const progressBar = new cliProgress.SingleBar({
         format:
           'Getting links to download [{bar}] {percentage}% | {value}/{total}',
@@ -95,7 +107,14 @@ const startCliApp = async (
       progressBar.stop()
 
       // Save download links
-      fs.writeFileSync(linksPath, JSON.stringify(imagesToDownload, null, 2))
+      fs.writeFileSync(
+        linksPath,
+        JSON.stringify({
+          all: downloadAllImages,
+          images: imagesToDownload,
+        }),
+        'utf8'
+      )
     }
 
     await downloadImages({
