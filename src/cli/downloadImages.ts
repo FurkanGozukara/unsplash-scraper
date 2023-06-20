@@ -69,12 +69,13 @@ const downloadImages = async ({
 }: DownloadImagesOptions) => {
   queryPath = path.join(downloadPath, query)
 
+  // Restore previous session
   if (fs.existsSync(queryPath)) {
     console.log('Continuing download from the past session...')
-    const oldImages = fs
-      .readdirSync(queryPath)
-      .map((image) => image.split('.')[0])
-    images = images.filter((image) => !oldImages.includes(image.id))
+    const oldImages = fs.readdirSync(queryPath)
+    const oldImagesIds = oldImages.map((image) => image.split('.')[0])
+    images = images.filter((image) => !oldImagesIds.includes(image.id))
+    downloaded.push(...oldImages)
   } else {
     fs.mkdirSync(queryPath)
   }
