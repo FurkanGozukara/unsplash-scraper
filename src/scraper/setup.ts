@@ -10,6 +10,7 @@ interface Settings {
   max_images?: number
   size?: Size
   hide_plus?: boolean
+  concurrent?: number
 }
 
 const setupScraper = async (): Promise<Settings> => {
@@ -60,12 +61,18 @@ const setupScraper = async (): Promise<Settings> => {
         type: 'confirm',
         message: 'Do you want to exclude images that have unsplash watermark?',
       },
+      {
+        name: 'concurrent',
+        type: 'input',
+        message: 'How many concurrent operations do you want to run at once?',
+      },
     ])
 
     const seachQuery = answers.seachQuery
     const downloadAllImages = answers.downloadAllImages
     const size = answers.size
     const hide_plus = answers.hide_plus
+    const concurrent = answers.concurrent && +answers.concurrent
 
     let max_images = null
 
@@ -100,6 +107,7 @@ const setupScraper = async (): Promise<Settings> => {
       max_images,
       size,
       hide_plus,
+      concurrent,
     }
   } catch (err) {
     console.error(err)

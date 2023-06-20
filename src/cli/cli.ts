@@ -11,7 +11,8 @@ const startCliApp = async (
   downloadAllImages: boolean,
   max_images: number,
   size: Size,
-  hide_plus: boolean
+  hide_plus: boolean,
+  concurrent: number
 ) => {
   console.log('\nSearch query:', seachQuery)
 
@@ -79,6 +80,7 @@ const startCliApp = async (
   await downloadImages({
     images: imagesToDownload,
     query: seachQuery,
+    concurrent,
   })
   process.exit(0)
 }

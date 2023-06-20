@@ -1,12 +1,14 @@
 import type { Image } from '../types.js'
 import download from 'image-downloader'
 import cliProgress from 'cli-progress'
+import pLimit from 'p-limit'
 import path from 'path'
 import fs from 'fs'
 
 interface DownloadImagesOptions {
   images: Image[]
   query: string
+  concurrent: number
 }
 
 const downloadPath = path.join(path.resolve('downloads'))
@@ -40,7 +42,12 @@ process.on('SIGINT', () => {
   }
 })
 
-const downloadImage = async (url: string, id: string, queryPath: string) => {
+const downloadImage = async (
+  progressBar: cliProgress.SingleBar,
+  url: string,
+  id: string,
+  queryPath: string
+) => {
   try {
     const options = {
       url,
@@ -49,12 +56,17 @@ const downloadImage = async (url: string, id: string, queryPath: string) => {
 
     await download.image(options)
     downloaded.push(`${id}.jpg`)
+    progressBar.increment()
   } catch (err) {
     console.error(err)
   }
 }
 
-const downloadImages = async ({ images, query }: DownloadImagesOptions) => {
+const downloadImages = async ({
+  images,
+  query,
+  concurrent,
+}: DownloadImagesOptions) => {
   queryPath = path.join(downloadPath, query)
 
   if (fs.existsSync(queryPath)) {
@@ -77,9 +89,13 @@ const downloadImages = async ({ images, query }: DownloadImagesOptions) => {
 
   progressBar.start(images.length, 0)
 
-  const downloadPromises = images.map(async (image) => {
-    await downloadImage(image.url, image.id, queryPath)
-    progressBar.increment()
+  // Limit the number of concurrent downloads
+  const limit = pLimit(concurrent)
+
+  const downloadPromises = images.map((image) => {
+    return limit(() =>
+      downloadImage(progressBar, image.url, image.id, queryPath)
+    )
   })
 
   await Promise.all(downloadPromises)

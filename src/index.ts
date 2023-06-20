@@ -11,6 +11,7 @@ setupScraper().then(
     max_images,
     size,
     hide_plus,
+    concurrent,
   }) => {
     if (mode === 'REST API') {
       await startHttpServer(page)
@@ -21,7 +22,8 @@ setupScraper().then(
         downloadAllImages!,
         max_images!,
         size!,
-        hide_plus!
+        hide_plus!,
+        concurrent!
       )
     }
   }
