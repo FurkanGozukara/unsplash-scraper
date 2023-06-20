@@ -44,6 +44,16 @@ After chosing the settings you want, images will be downloaded inside `./downloa
 
 You can leave some fields `null` so you can chose them from the cli
 
+**search.txt**
+
+Use it if you want to for more than one thing
+
+```
+car
+cat
+dog
+```
+
 ## REST API
 
 ```
