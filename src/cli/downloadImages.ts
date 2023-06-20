@@ -67,7 +67,7 @@ const downloadImages = async ({
   query,
   concurrent,
 }: DownloadImagesOptions) => {
-  queryPath = path.join(downloadPath, query)
+  queryPath = path.join(downloadPath, query.trim().toLowerCase())
 
   // Restore previous session
   if (fs.existsSync(queryPath)) {
