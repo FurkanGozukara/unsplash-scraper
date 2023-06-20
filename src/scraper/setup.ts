@@ -93,7 +93,7 @@ const setupScraper = async (): Promise<Settings> => {
     }
 
     if (cliConfigData.concurrent) {
-      concurrent = cliConfigData.concurrent
+      concurrent = cliConfigData.concurrent && +cliConfigData.concurrent
     }
 
     if (!downloadAllImages && !max_images) {
@@ -155,7 +155,7 @@ const setupScraper = async (): Promise<Settings> => {
     }
 
     if (answers.concurrent) {
-      concurrent = answers.concurrent
+      concurrent = answers.concurrent && +answers.concurrent
     }
 
     if (!downloadAllImages && !max_images) {
