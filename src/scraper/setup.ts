@@ -2,6 +2,7 @@ import type { Mode, Size } from '../types.js'
 import puppeteer, { Page, Browser } from 'puppeteer'
 import inquirer from 'inquirer'
 import fs from 'fs'
+import os from 'os'
 
 interface Settings {
   page: Page
@@ -122,10 +123,11 @@ const setupScraper = async (): Promise<Settings> => {
     }
 
     if (!concurrent) {
+      const cpusCount = os.cpus().length
       questions.push({
         name: 'concurrent',
         type: 'input',
-        message: 'How many concurrent operations do you want to run at once?',
+        message: `How many concurrent operations do you want to run at once? (your cpu has ${cpusCount} cores)`,
       })
     }
 
@@ -169,11 +171,16 @@ const setupScraper = async (): Promise<Settings> => {
 
       // if exists, convert to number
       max_images = answers.max_images && +answers.max_images
+    }
 
-      if (!max_images) {
-        console.error('Missing max images')
-        process.exit(1)
-      }
+    if (
+      !(max_images || downloadAllImages) ||
+      !size ||
+      !hide_plus ||
+      !concurrent
+    ) {
+      console.error('Missing some options')
+      process.exit(1)
     }
 
     return {
