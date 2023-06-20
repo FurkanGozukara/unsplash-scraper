@@ -6,7 +6,7 @@ setupScraper().then(
   async ({
     page,
     mode,
-    seachQuery,
+    searchQueries,
     downloadAllImages,
     max_images,
     size,
@@ -18,7 +18,7 @@ setupScraper().then(
     } else {
       await startCliApp(
         page,
-        seachQuery!,
+        searchQueries!,
         downloadAllImages!,
         max_images!,
         size!,

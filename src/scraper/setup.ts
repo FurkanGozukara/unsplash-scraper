@@ -2,11 +2,12 @@ import type { Mode, Size } from '../types.js'
 import puppeteer, { Page, Browser } from 'puppeteer'
 import inquirer from 'inquirer'
 import fs from 'fs'
+import path from 'path'
 
 interface Settings {
   page: Page
   mode: Mode
-  seachQuery?: string
+  searchQueries?: string[]
   downloadAllImages?: boolean
   max_images?: number
   size?: Size
@@ -42,6 +43,7 @@ const setupScraper = async (): Promise<Settings> => {
       return { page, mode: 'REST API' }
     }
 
+    let searchQueries: string[] = []
     let downloadAllImages = null
     let size = null
     let hide_plus = null
@@ -63,13 +65,36 @@ const setupScraper = async (): Promise<Settings> => {
       process.exit(1)
     }
 
-    const questions: any[] = [
-      {
-        name: 'seachQuery',
+    const questions: any[] = []
+
+    // Getting search queries from file
+    const searchFilePath = path.resolve('search.txt')
+    const searchFileExists = fs.existsSync(searchFilePath)
+
+    if (!searchFileExists) {
+      questions.push({
+        name: 'searchQuery',
         type: 'input',
         message: 'What do you want to search for?',
-      },
-    ]
+      })
+    } else {
+      const searchFile = fs.readFileSync(searchFilePath, 'utf8')
+      const fileQueries = searchFile
+        .replace(/\r/g, '')
+        .split('\n')
+        .filter((query) => query !== '')
+        .map((query) => query.trim().toLowerCase())
+
+      if (fileQueries.length >= 1) {
+        searchQueries = fileQueries
+      } else {
+        questions.push({
+          name: 'searchQuery',
+          type: 'input',
+          message: 'What do you want to search for?',
+        })
+      }
+    }
 
     if (cliConfigData.downloadAllImages && cliConfigData.max_images) {
       console.error('You can only set one of downloadAllImages or max_images')
@@ -131,11 +156,15 @@ const setupScraper = async (): Promise<Settings> => {
 
     const answers = await inquirer.prompt(questions)
 
-    const seachQuery = answers.seachQuery
+    const searchQuery = answers.searchQuery
 
-    if (!seachQuery) {
+    if (!searchQuery && searchQueries.length === 0) {
       console.error('Missing search query')
       process.exit(1)
+    }
+
+    if (searchQuery) {
+      searchQueries = [searchQuery]
     }
 
     if (answers.downloadAllImages) {
@@ -184,7 +213,7 @@ const setupScraper = async (): Promise<Settings> => {
     return {
       page,
       mode: 'Scraper CLI',
-      seachQuery,
+      searchQueries,
       downloadAllImages,
       max_images,
       size,
