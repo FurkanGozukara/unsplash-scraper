@@ -30,6 +30,20 @@ npm run start
 
 After chosing the settings you want, images will be downloaded inside `./downloads` folder
 
+**cli.config.json**
+
+`downloadAllImages`: `boolean`
+
+`size`: `"Small"`, `"Medium"`, `"Original"`
+
+`hide_plus`: `boolean`, hide watermark
+
+`concurrent`: `number`, number of concurrent operations at once
+
+`max_images`: `number`
+
+You can leave some fields `null` so you can chose them from the cli
+
 ## REST API
 
 ```

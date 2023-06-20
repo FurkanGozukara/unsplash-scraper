@@ -1,6 +1,7 @@
 import type { Mode, Size } from '../types.js'
-import puppeteer, { Page } from 'puppeteer'
+import puppeteer, { Page, Browser } from 'puppeteer'
 import inquirer from 'inquirer'
+import fs from 'fs'
 
 interface Settings {
   page: Page
@@ -13,18 +14,20 @@ interface Settings {
   concurrent?: number
 }
 
+let browser: Browser | null = null
+
+// Handle Quit
+process.on('SIGINT', async () => {
+  if (browser) await browser.close()
+  process.exit(0)
+})
+
 const setupScraper = async (): Promise<Settings> => {
   try {
-    const browser = await puppeteer.launch({ headless: 'new' })
+    browser = await puppeteer.launch({ headless: 'new' })
     const page = await browser.newPage()
 
     await page.goto('https://unsplash.com/')
-
-    // Handle Ctrl + C signal
-    process.on('SIGINT', async () => {
-      await browser.close()
-      process.exit(0)
-    })
 
     const modeAnswers = await inquirer.prompt([
       {
@@ -39,49 +42,123 @@ const setupScraper = async (): Promise<Settings> => {
       return { page, mode: 'REST API' }
     }
 
-    const answers = await inquirer.prompt([
+    let downloadAllImages = null
+    let size = null
+    let hide_plus = null
+    let concurrent = null
+    let max_images = null
+
+    const cliConfigExists = fs.existsSync('./cli.config.json')
+
+    if (!cliConfigExists) {
+      console.error('Missing cli.config.json')
+      process.exit(1)
+    }
+
+    const cliConfig = fs.readFileSync('./cli.config.json', 'utf-8')
+    const cliConfigData = JSON.parse(cliConfig)
+
+    if (!cliConfigData) {
+      console.error('Invalid config.json')
+      process.exit(1)
+    }
+
+    const questions: any[] = [
       {
         name: 'seachQuery',
         type: 'input',
         message: 'What do you want to search for?',
       },
-      {
+    ]
+
+    if (cliConfigData.downloadAllImages && cliConfigData.max_images) {
+      console.error('You can only set one of downloadAllImages or max_images')
+      process.exit(1)
+    }
+
+    if (cliConfigData.downloadAllImages) {
+      downloadAllImages = cliConfigData.downloadAllImages
+    }
+
+    if (cliConfigData.max_images) {
+      max_images = cliConfigData.max_images
+    }
+
+    if (cliConfigData.size) {
+      size = cliConfigData.size
+    }
+
+    if (cliConfigData.hide_plus) {
+      hide_plus = cliConfigData.hide_plus
+    }
+
+    if (cliConfigData.concurrent) {
+      concurrent = cliConfigData.concurrent
+    }
+
+    if (!downloadAllImages && !max_images) {
+      questions.push({
         name: 'downloadAllImages',
         type: 'confirm',
         message: 'Do you want to download all images?',
-      },
-      {
+      })
+    }
+
+    if (!size) {
+      questions.push({
         name: 'size',
         type: 'list',
         message: 'What size do you want to download?',
         choices: ['Small', 'Medium', 'Original'],
-      },
-      {
+      })
+    }
+
+    if (!hide_plus) {
+      questions.push({
         name: 'hide_plus',
         type: 'confirm',
         message: 'Do you want to exclude images that have unsplash watermark?',
-      },
-      {
+      })
+    }
+
+    if (!concurrent) {
+      questions.push({
         name: 'concurrent',
         type: 'input',
         message: 'How many concurrent operations do you want to run at once?',
-      },
-    ])
+      })
+    }
+
+    const answers = await inquirer.prompt(questions)
 
     const seachQuery = answers.seachQuery
-    const downloadAllImages = answers.downloadAllImages
-    const size = answers.size
-    const hide_plus = answers.hide_plus
-    const concurrent = answers.concurrent && +answers.concurrent
-
-    let max_images = null
 
     if (!seachQuery) {
       console.error('Missing search query')
       process.exit(1)
     }
 
-    if (!downloadAllImages) {
+    if (answers.downloadAllImages) {
+      downloadAllImages = answers.downloadAllImages
+    }
+
+    if (answers.max_images) {
+      max_images = answers.max_images
+    }
+
+    if (answers.size) {
+      size = answers.size
+    }
+
+    if (answers.hide_plus) {
+      hide_plus = answers.hide_plus
+    }
+
+    if (answers.concurrent) {
+      concurrent = answers.concurrent
+    }
+
+    if (!downloadAllImages && !max_images) {
       const answers = await inquirer.prompt([
         {
           name: 'max_images',
