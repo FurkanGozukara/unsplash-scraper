@@ -35,7 +35,7 @@ const startCliApp = async (
   let totalSteps = null
 
   let p = 1
-  const limit = 50
+  const limit = 30
 
   while (true) {
     if (downloadAllImages && imagesToDownload.length === totalSteps) break
