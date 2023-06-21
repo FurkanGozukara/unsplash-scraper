@@ -146,7 +146,7 @@ const setupScraper = async (): Promise<Settings> => {
         name: 'size',
         type: 'list',
         message: 'What size do you want to download?',
-        choices: ['Small', 'Medium', 'Original'],
+        choices: ['Original', 'Small', 'Medium'],
       })
     }
 
