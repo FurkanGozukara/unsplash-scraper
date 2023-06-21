@@ -116,3 +116,7 @@ Response:
 `total_pages`: total pages per x limit
 
 `hide_plus`: it can be any truthy value, you can set it as "hide_plus=true". It hides the images that have unsplash watermark
+
+`order_by`: `"editorial"`, `"latest"`
+
+`orientation`: `"landscape"`, `"portrait"`
