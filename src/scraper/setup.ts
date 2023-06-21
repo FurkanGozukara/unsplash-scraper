@@ -37,7 +37,7 @@ const setupScraper = async (): Promise<Settings> => {
         name: 'run_http_server',
         type: 'list',
         message: 'Do you want to run the REST API or use the scraper cli?',
-        choices: ['REST API', 'Scraper CLI'],
+        choices: ['Scraper CLI', 'REST API'],
       },
     ])
 
