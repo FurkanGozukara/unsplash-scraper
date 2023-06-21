@@ -38,10 +38,19 @@ const startCliApp = async (
       )
 
       const oldLinks = JSON.parse(fs.readFileSync(linksPath, 'utf8'))
+      const oldLinksMatch =
+        oldLinks.all === downloadAllImages &&
+        oldLinks.hide_plus === hide_plus &&
+        oldLinks.order_by === order_by &&
+        oldLinks.orientation === orientation
 
-      if (oldLinks.all && downloadAllImages) {
+      if (downloadAllImages && oldLinksMatch) {
         imagesToDownload.push(...oldLinks)
-      } else if (!downloadAllImages && oldLinks.images.length >= max_images) {
+      } else if (
+        !downloadAllImages &&
+        oldLinksMatch &&
+        oldLinks.images.length >= max_images
+      ) {
         imagesToDownload.push(...oldLinks.images.slice(0, max_images))
       } else {
         // Delete old links
@@ -121,6 +130,9 @@ const startCliApp = async (
         linksPath,
         JSON.stringify({
           all: downloadAllImages,
+          hide_plus,
+          order_by,
+          orientation,
           images: imagesToDownload,
         }),
         'utf8'
