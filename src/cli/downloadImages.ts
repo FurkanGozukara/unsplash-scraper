@@ -58,6 +58,7 @@ const downloadImage = async (
     downloaded.push(`${id}.jpg`)
     progressBar.increment()
   } catch (err) {
+    console.log('\n')
     console.error(err)
   }
 }
