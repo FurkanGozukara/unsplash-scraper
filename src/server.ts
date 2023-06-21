@@ -1,6 +1,7 @@
 import type { Page } from 'puppeteer'
 import express from 'express'
 import scrape from './scraper/scrape.js'
+import { Order, Orientation } from './types.js'
 
 const startHttpServer = async (page: Page) => {
   const app = express()
@@ -8,7 +9,7 @@ const startHttpServer = async (page: Page) => {
   app.use(express.json())
 
   app.get('/', async (req, res) => {
-    const { query, p, limit, hide_plus } = req.query
+    const { query, p, limit, hide_plus, order_by, orientation } = req.query
 
     if (!query || !p || !limit) {
       return res.status(400).json({
@@ -16,7 +17,15 @@ const startHttpServer = async (page: Page) => {
       })
     }
 
-    const data = await scrape(page, query.toString(), +p, +limit, !!hide_plus)
+    const data = await scrape(
+      page,
+      query.toString(),
+      +p,
+      +limit,
+      !!hide_plus,
+      order_by as Order,
+      orientation as Orientation
+    )
 
     if (!data) {
       return res.status(404).json({

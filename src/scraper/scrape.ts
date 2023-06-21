@@ -1,4 +1,5 @@
 import type { Page } from 'puppeteer'
+import { Order, Orientation } from '../types'
 
 interface ResponseData {
   total: number
@@ -24,12 +25,22 @@ const scrape = async (
   query: string,
   p: number,
   limit: number,
-  hide_plus: boolean = false
+  hide_plus: boolean = false,
+  order_by: Order = 'relevant',
+  orientation: Orientation = 'all'
 ): Promise<ResponseData | false> => {
   let api_url = `https://unsplash.com/napi/search/photos?query=${query}&per_page=${limit}&page=${p}`
 
   if (hide_plus) {
     api_url += '&plus=none'
+  }
+
+  if (order_by === 'editorial' || order_by === 'latest') {
+    api_url += `&order_by=${order_by}`
+  }
+
+  if (orientation === 'landscape' || orientation === 'portrait') {
+    api_url += `&orientation=${orientation}`
   }
 
   const data = await page.evaluate((api_url) => {

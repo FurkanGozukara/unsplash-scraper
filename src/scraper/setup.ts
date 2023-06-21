@@ -1,4 +1,4 @@
-import type { Mode, Size } from '../types.js'
+import type { Mode, Order, Orientation, Size } from '../types.js'
 import puppeteer, { Page, Browser } from 'puppeteer'
 import inquirer from 'inquirer'
 import fs from 'fs'
@@ -12,6 +12,8 @@ interface Settings {
   max_images?: number
   size?: Size
   hide_plus?: boolean
+  order_by?: Order
+  orientation?: Orientation
   concurrent?: number
 }
 
@@ -47,6 +49,8 @@ const setupScraper = async (): Promise<Settings> => {
     let downloadAllImages = null
     let size = null
     let hide_plus = null
+    let order_by = null
+    let orientation = null
     let concurrent = null
     let max_images = null
 
@@ -117,6 +121,14 @@ const setupScraper = async (): Promise<Settings> => {
       hide_plus = cliConfigData.hide_plus
     }
 
+    if (cliConfigData.order_by) {
+      order_by = cliConfigData.order_by
+    }
+
+    if (cliConfigData.orientation) {
+      orientation = cliConfigData.orientation
+    }
+
     if (cliConfigData.concurrent) {
       concurrent = cliConfigData.concurrent && +cliConfigData.concurrent
     }
@@ -143,6 +155,24 @@ const setupScraper = async (): Promise<Settings> => {
         name: 'hide_plus',
         type: 'confirm',
         message: 'Do you want to exclude images that have unsplash watermark?',
+      })
+    }
+
+    if (!order_by) {
+      questions.push({
+        name: 'order_by',
+        type: 'list',
+        message: 'How do you want to order the images?',
+        choices: ['relevant', 'editorial', 'latest'],
+      })
+    }
+
+    if (!orientation) {
+      questions.push({
+        name: 'orientation',
+        type: 'list',
+        message: 'What orientation do you want to download?',
+        choices: ['all', 'portrait', 'landscape'],
       })
     }
 
@@ -183,6 +213,14 @@ const setupScraper = async (): Promise<Settings> => {
       hide_plus = answers.hide_plus
     }
 
+    if (answers.order_by) {
+      order_by = answers.order_by
+    }
+
+    if (answers.orientation) {
+      orientation = answers.orientation
+    }
+
     if (answers.concurrent) {
       concurrent = answers.concurrent && +answers.concurrent
     }
@@ -204,6 +242,8 @@ const setupScraper = async (): Promise<Settings> => {
       !(max_images || downloadAllImages) ||
       !size ||
       !hide_plus ||
+      !order_by ||
+      !orientation ||
       !concurrent
     ) {
       console.error('Missing some options')
@@ -218,6 +258,8 @@ const setupScraper = async (): Promise<Settings> => {
       max_images,
       size,
       hide_plus,
+      order_by,
+      orientation,
       concurrent,
     }
   } catch (err) {

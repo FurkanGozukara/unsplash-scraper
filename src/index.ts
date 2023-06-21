@@ -11,6 +11,8 @@ setupScraper().then(
     max_images,
     size,
     hide_plus,
+    order_by,
+    orientation,
     concurrent,
   }) => {
     if (mode === 'REST API') {
@@ -23,6 +25,8 @@ setupScraper().then(
         max_images!,
         size!,
         hide_plus!,
+        order_by!,
+        orientation!,
         concurrent!
       )
     }

@@ -38,6 +38,10 @@ After chosing the settings you want, images will be downloaded inside `./downloa
 
 `hide_plus`: `boolean`, hide watermark
 
+`order_by`: `"editorial"`, `"latest"`, `"relevant"`
+
+`orientation`: `"landscape"`, `"portrait"`, `"all"`
+
 `concurrent`: `number`, number of concurrent operations at once
 
 `max_images`: `number`

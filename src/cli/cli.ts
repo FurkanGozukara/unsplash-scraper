@@ -1,5 +1,5 @@
 import type { Page } from 'puppeteer'
-import type { Image, Size } from '../types.js'
+import type { Image, Order, Orientation, Size } from '../types.js'
 import scrape from '../scraper/scrape.js'
 import cliProgress from 'cli-progress'
 import downloadImages from './downloadImages.js'
@@ -14,6 +14,8 @@ const startCliApp = async (
   max_images: number,
   size: Size,
   hide_plus: boolean,
+  order_by: Order,
+  orientation: Orientation,
   concurrent: number
 ) => {
   console.log('\nSearch:', searchQueries, '\n')
@@ -68,7 +70,15 @@ const startCliApp = async (
         if (downloadAllImages && imagesToDownload.length === totalSteps) break
         if (!downloadAllImages && imagesToDownload.length === max_images) break
 
-        const images = await scrape(page, query, p, limit, hide_plus)
+        const images = await scrape(
+          page,
+          query,
+          p,
+          limit,
+          hide_plus,
+          order_by,
+          orientation
+        )
 
         if (!images || images.results.length === 0) break
 
