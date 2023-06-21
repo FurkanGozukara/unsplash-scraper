@@ -80,6 +80,23 @@ const downloadImages = async ({
     fs.mkdirSync(queryPath)
   }
 
+  // Don't download images that are already in other folder
+  console.log('Excluding duplicate images...')
+
+  const otherFolders = fs
+    .readdirSync(downloadPath)
+    .filter((folder) => !folder.endsWith('.json'))
+
+  otherFolders.forEach((folder) => {
+    if (folder !== query) {
+      const otherImages = fs.readdirSync(path.join(downloadPath, folder))
+      downloaded.push(...otherImages)
+    }
+  })
+
+  // Filter out images that are already downloaded
+  images = images.filter((image) => !downloaded.includes(`${image.id}.jpg`))
+
   console.log('\n')
   const progressBar = new cliProgress.SingleBar({
     format: 'Downloading Images [{bar}] {percentage}% | {value}/{total}',
