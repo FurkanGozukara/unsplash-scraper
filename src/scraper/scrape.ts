@@ -32,7 +32,7 @@ const scrape = async (
   let api_url = `https://unsplash.com/napi/search/photos?query=${query}&per_page=${limit}&page=${p}`
 
   if (hide_plus) {
-    api_url += '&plus=none'
+    api_url += '&license=free'
   }
 
   if (order_by === 'editorial' || order_by === 'latest') {
